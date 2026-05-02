@@ -282,7 +282,7 @@ header h1 {
 .fm-data .pts { font-weight: 700; }
 
 .rel-letter {
-  color: #ef7a7a;
+  color: #fff;
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0;
@@ -433,11 +433,49 @@ header h1 {
   margin-right: 2px;
 }
 
-@media (max-width: 760px) {
-  .grid-row { grid-template-columns: 48px repeat(2, 1fr); }
-  .grid-row .grid-cell:nth-child(n+4),
-  .grid-row .grid-club:nth-child(n+4) { display: none; }
+/* Mobile fixtures: per-club stacked sections instead of the 4-column matrix. */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
 }
+
+.stack-club {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.stack-header {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.stack-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.stack-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.stack-md {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  padding-left: 2px;
+}
+
+.stack-item .grid-cell { min-height: 0; }
 
 /* -------------------------------------------------------------------------- */
 /* Toggle (W / D / L)                                                         */
@@ -533,10 +571,28 @@ header h1 {
 /* -------------------------------------------------------------------------- */
 
 @media (max-width: 720px) {
-  .header-inner { padding: var(--s-4); gap: var(--s-3); }
-  header h1 { font-size: 22px; }
-  .header-logo { height: 40px; }
-  .meta { flex-wrap: wrap; }
-  .fm-row { grid-template-columns: 40px 32px minmax(140px, 1fr) 36px 36px 36px 36px 48px 48px 80px; padding: 0 var(--s-3); font-size: 12px; }
-  .fm-data { height: 36px; }
+  .app { padding: var(--s-3); }
+
+  .header-inner { padding: var(--s-3) var(--s-4); gap: var(--s-3); }
+  header h1 { font-size: 20px; }
+  .header-logo { height: 36px; }
+  .meta { flex-wrap: wrap; font-size: 11px; }
+  .actions { width: 100%; }
+  .actions .btn { flex: 1 1 0; justify-content: center; padding: 0 var(--s-3); }
+
+  /* Hide W / D / L on mobile to keep the table readable. POS/R/TEAM/P/GD/PTS/SURV remain. */
+  .fm-row {
+    grid-template-columns: 36px 26px minmax(120px, 1fr) 32px 44px 44px 72px;
+    padding: 0 var(--s-3);
+    font-size: 12px;
+  }
+  .fm-row .col-w,
+  .fm-row .col-d,
+  .fm-row .col-l { display: none; }
+  .fm-data { height: 38px; }
+  .fm-head { font-size: 10px; letter-spacing: 0.08em; }
+  .col-surv { font-size: 11px; }
+
+  .club-logo { width: 18px; height: 18px; }
+  .club-name { font-size: 12px; }
 }

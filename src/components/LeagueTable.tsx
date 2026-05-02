@@ -35,9 +35,9 @@ export function LeagueTable({ standings, survival }: Props) {
         <span className="col-inf">INF</span>
         <span className="col-team">TEAM</span>
         <span>P</span>
-        <span>W</span>
-        <span>D</span>
-        <span>L</span>
+        <span className="col-w">W</span>
+        <span className="col-d">D</span>
+        <span className="col-l">L</span>
         <span>GD</span>
         <span>PTS</span>
         <span className="col-surv">SURVIVAL %</span>
@@ -62,7 +62,7 @@ export function LeagueTable({ standings, survival }: Props) {
                 }}
               >
                 <span className="col-pos">{ordinal(pos)}</span>
-                <span className="col-inf">{pos >= 18 && <span className="rel-letter">R</span>}</span>
+                <span className="col-inf">{survP <= 0.00005 && <span className="rel-letter">R</span>}</span>
                 <span className="col-team">
                   {LOGOS[t.short] && (
                     <img className="club-logo" src={LOGOS[t.short]} alt="" />
@@ -70,9 +70,9 @@ export function LeagueTable({ standings, survival }: Props) {
                   <span className="club-name">{DISPLAY_NAME[t.short] ?? t.name}</span>
                 </span>
                 <span>{t.played}</span>
-                <span>{t.won}</span>
-                <span>{t.drawn}</span>
-                <span>{t.lost}</span>
+                <span className="col-w">{t.won}</span>
+                <span className="col-d">{t.drawn}</span>
+                <span className="col-l">{t.lost}</span>
                 <span>{t.gd > 0 ? `+${t.gd}` : t.gd}</span>
                 <span className="pts">{t.points}</span>
                 <span className={`col-surv surv-${survivalClass(survP)}`}>

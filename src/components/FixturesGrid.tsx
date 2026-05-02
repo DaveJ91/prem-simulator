@@ -9,9 +9,13 @@ import {
 } from '../standings';
 import { LOGOS, DISPLAY_NAME } from '../logos';
 import { MATCH_PROBABILITIES } from '../odds';
+import { useMediaQuery } from '../useMediaQuery';
 import { Toggle } from './Toggle';
 
 const MATCHDAYS = [35, 36, 37, 38];
+
+const findMatch = (club: string, md: number): Match | undefined =>
+  MATCHES.find((m) => m.matchday === md && (m.home === club || m.away === club));
 
 type Props = {
   results: Results;
@@ -19,6 +23,13 @@ type Props = {
 };
 
 export function FixturesGrid({ results, setResult }: Props) {
+  const isMobile = useMediaQuery('(max-width: 720px)');
+  return isMobile
+    ? <MobileStack results={results} setResult={setResult} />
+    : <DesktopGrid results={results} setResult={setResult} />;
+}
+
+function DesktopGrid({ results, setResult }: Props) {
   return (
     <div className="grid">
       <div className="grid-row grid-head">
@@ -35,11 +46,8 @@ export function FixturesGrid({ results, setResult }: Props) {
         <div key={md} className="grid-row">
           <span className="grid-md-label">MW{md}</span>
           {TOGGLEABLE_CLUBS.map((c) => {
-            const match = MATCHES.find(
-              (m) => m.matchday === md && (m.home === c.short || m.away === c.short),
-            );
-            if (!match) return <span key={c.key} className="grid-cell empty">—</span>;
-            return (
+            const match = findMatch(c.short, md);
+            return match ? (
               <FixtureCell
                 key={c.key}
                 club={c.short}
@@ -47,9 +55,43 @@ export function FixturesGrid({ results, setResult }: Props) {
                 score={results[match.id]}
                 setResult={setResult}
               />
+            ) : (
+              <span key={c.key} className="grid-cell empty">—</span>
             );
           })}
         </div>
+      ))}
+    </div>
+  );
+}
+
+function MobileStack({ results, setResult }: Props) {
+  return (
+    <div className="stack">
+      {TOGGLEABLE_CLUBS.map((c) => (
+        <section key={c.key} className="stack-club">
+          <header className="stack-header">
+            {LOGOS[c.short] && <img className="grid-club-logo" src={LOGOS[c.short]} alt="" />}
+            <span className="grid-club-name">{c.name}</span>
+          </header>
+          <div className="stack-body">
+            {MATCHDAYS.map((md) => {
+              const match = findMatch(c.short, md);
+              if (!match) return null;
+              return (
+                <div key={md} className="stack-item">
+                  <span className="stack-md">MW{md}</span>
+                  <FixtureCell
+                    club={c.short}
+                    match={match}
+                    score={results[match.id]}
+                    setResult={setResult}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </section>
       ))}
     </div>
   );
@@ -81,8 +123,6 @@ function FixtureCell({ club, match, score, setResult }: FixtureCellProps) {
     if (score) setResult(match.id, bumpScore(score, delta));
   };
 
-  // - draws can decrement until 0-0
-  // - non-draws stop one above the loser's tally so they remain a win/loss
   const canDecrement =
     !!score &&
     (outcome === 'D' ? score.hg > 0 : Math.max(score.hg, score.ag) > 1);
