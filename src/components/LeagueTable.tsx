@@ -13,16 +13,12 @@ function ordinal(n: number) {
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-function pct(p: number): string {
-  if (p >= 0.99995) return '100.00%';
-  if (p <= 0.00005) return '0.00%';
-  return `${(p * 100).toFixed(2)}%`;
-}
-
-function survivalClass(p: number): string {
-  if (p >= 0.85) return 'safe';
-  if (p >= 0.4) return 'medium';
-  return 'danger';
+function survivalDisplay(p: number): { label: string; cls: string } {
+  if (p >= 0.99995) return { label: '✓', cls: 'safe icon' };
+  if (p <= 0.00005) return { label: 'R', cls: 'danger icon' };
+  if (p >= 0.85) return { label: `${(p * 100).toFixed(2)}%`, cls: 'safe' };
+  if (p >= 0.4)  return { label: `${(p * 100).toFixed(2)}%`, cls: 'medium' };
+  return { label: `${(p * 100).toFixed(2)}%`, cls: 'danger' };
 }
 
 export function LeagueTable({ standings, survival }: Props) {
@@ -67,7 +63,8 @@ export function LeagueTable({ standings, survival }: Props) {
                   {LOGOS[t.short] && (
                     <img className="club-logo" src={LOGOS[t.short]} alt="" />
                   )}
-                  <span className="club-name">{DISPLAY_NAME[t.short] ?? t.name}</span>
+                  <span className="club-name club-name-full">{DISPLAY_NAME[t.short] ?? t.name}</span>
+                  <span className="club-name club-name-short">{t.short}</span>
                 </span>
                 <span>{t.played}</span>
                 <span className="col-w">{t.won}</span>
@@ -75,9 +72,10 @@ export function LeagueTable({ standings, survival }: Props) {
                 <span className="col-l">{t.lost}</span>
                 <span>{t.gd > 0 ? `+${t.gd}` : t.gd}</span>
                 <span className="pts">{t.points}</span>
-                <span className={`col-surv surv-${survivalClass(survP)}`}>
-                  {pct(survP)}
-                </span>
+                {(() => {
+                  const s = survivalDisplay(survP);
+                  return <span className={`col-surv surv-${s.cls}`}>{s.label}</span>;
+                })()}
               </motion.div>
             );
           })}

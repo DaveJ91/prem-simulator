@@ -278,6 +278,7 @@ header h1 {
 }
 
 .club-name { font-weight: 600; }
+.club-name-short { display: none; }
 
 .fm-data .pts { font-weight: 700; }
 
@@ -291,6 +292,7 @@ header h1 {
 .surv-safe   { color: var(--win); }
 .surv-medium { color: var(--draw); }
 .surv-danger { color: var(--loss); }
+.col-surv.icon { font-size: 16px; font-weight: 700; }
 
 /* -------------------------------------------------------------------------- */
 /* Fixtures grid                                                              */
@@ -595,4 +597,6 @@ header h1 {
 
   .club-logo { width: 18px; height: 18px; }
   .club-name { font-size: 12px; }
+  .club-name-full  { display: none; }
+  .club-name-short { display: inline; letter-spacing: 0.04em; }
 }
