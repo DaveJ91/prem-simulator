@@ -1,73 +1,32 @@
-# React + TypeScript + Vite
+# Premier League Run-In Simulator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 **Live:** https://prem-sim.vercel.app
 
-Currently, two official plugins are available:
+A small React app for toggling final-day Premier League results and watching the relegation table react. Inspired by ESPN's NFL playoff machine.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it does
 
-## React Compiler
+- League table for positions 15–20 (FM-styled), with framer-motion row animations on every change.
+- Toggle W/D/L (and bump the goal margin) for **Tottenham, West Ham, Nottingham Forest, Leeds** across the final 4 matchweeks of the 2025/26 season.
+- Live **Survival %** column, computed via a 10,000-iteration Monte Carlo using per-fixture probabilities and a seeded PRNG so identical inputs give identical results.
+- **Simulate** button rolls every remaining game from the same probability table.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Match probabilities
 
-## Expanding the ESLint configuration
+Edit [`src/odds.ts`](src/odds.ts) to override individual fixtures. Each row is annotated:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `[bk]` — bookmaker odds (Bet365 / Sky Sports), normalised
+- `[pm]` — predictive-model figure cited by a betting preview site
+- `[est]` — estimate where market prices aren't published yet
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Vite + React + TypeScript, framer-motion for the table animation, no router, no state library. Deployed on Vercel — every push to `main` auto-deploys.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Local dev
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build
 ```
