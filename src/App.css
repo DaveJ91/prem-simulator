@@ -584,9 +584,10 @@ header h1 {
 
   /* Hide W / D / L on mobile to keep the table readable. POS/R/TEAM/P/GD/PTS/SURV remain. */
   .fm-row {
-    grid-template-columns: 36px 26px minmax(120px, 1fr) 32px 44px 44px 72px;
-    padding: 0 var(--s-3);
+    grid-template-columns: 30px 20px 60px 26px 36px 36px 1fr;
+    padding: 0 var(--s-2);
     font-size: 12px;
+    gap: 4px;
   }
   .fm-row .col-w,
   .fm-row .col-d,
