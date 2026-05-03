@@ -24,5 +24,8 @@ dist-ssr
 *.sw?
 .vercel
 
+# Python model
+model/.venv
+model/data/
 __pycache__/
 *.pyc
