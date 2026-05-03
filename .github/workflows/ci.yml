@@ -24,7 +24,12 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Install deps
+        # npm install (not npm ci) because the lockfile is generated on macOS
+        # but CI runs on Linux — `npm ci` rejects platform-specific optional
+        # deps that aren't in the lock. `npm install` resolves them at install
+        # time. Slight loss of strictness for a cross-platform-friendly fit.
+        run: npm install
 
       - name: Lint
         run: npm run lint
