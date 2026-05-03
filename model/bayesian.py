@@ -99,7 +99,6 @@ class BayesianModel:
 
         teams = sorted(set(df["home"]) | set(df["away"]))
         ix = {t: i for i, t in enumerate(teams)}
-        n = len(teams)
         home_ix = df["home"].map(ix).to_numpy()
         away_ix = df["away"].map(ix).to_numpy()
 
@@ -111,7 +110,9 @@ class BayesianModel:
             ag = df["ftag"].astype(int).to_numpy()
 
         # Build the model. coords lets us label the team dimension cleanly.
-        with pm.Model(coords={"team": teams}) as model:
+        # Variables created in this `with` block auto-attach to the active model;
+        # we don't need a local handle.
+        with pm.Model(coords={"team": teams}):
             # League-wide spread on attack/defence ratings.
             sigma_atk = pm.HalfNormal("sigma_atk", 1.0)
             sigma_def = pm.HalfNormal("sigma_def", 1.0)

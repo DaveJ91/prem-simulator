@@ -19,8 +19,15 @@ generate_odds.py →  src/odds.ts           (TypeScript constants for the React 
 ```bash
 cd model
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python generate_odds.py            # fetches data → fits DC+xG → writes odds.ts
+pip install -r requirements.txt           # core deps only (~10s, ~80MB)
+python generate_odds.py                   # fetches data → fits DC+xG → writes odds.ts
+```
+
+For the Bayesian model (Tier 3), also install the heavy deps:
+
+```bash
+pip install -r requirements-bayesian.txt  # adds pymc + arviz (~500MB, ~2 min)
+python generate_odds.py --bayesian
 ```
 
 The first run downloads ~50KB from football-data.co.uk and ~200KB from
@@ -171,7 +178,12 @@ respectable; >10pp off and there's a bug.
 
 ## Automating it
 
-Run on a schedule on the mini PC. Daily 6am cron:
+The repo has a GitHub Actions cron — `.github/workflows/refresh-odds.yml` —
+that runs this script daily at 06:00 UTC and commits the fresh `src/odds.ts`
+back to main if it changed. Vercel then auto-redeploys.
+
+If you'd rather run it on your own server (e.g. a home mini PC), the
+equivalent crontab line is:
 
 ```cron
 0 6 * * * cd /home/dave/projects/prem-simulator && \
@@ -182,8 +194,8 @@ Run on a schedule on the mini PC. Daily 6am cron:
   git push
 ```
 
-Vercel auto-redeploys on push, so the live site has fresh probabilities
-every morning. Total cost: zero.
+If you go that route, disable the GitHub Actions cron to avoid double
+commits — comment out the `schedule:` block in `.github/workflows/refresh-odds.yml`.
 
 ---
 

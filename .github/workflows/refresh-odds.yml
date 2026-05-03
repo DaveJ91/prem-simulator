@@ -1,0 +1,49 @@
+name: Refresh odds
+
+on:
+  schedule:
+    # 06:00 UTC daily — matches the README's suggested cron.
+    - cron: '0 6 * * *'
+  # Lets you trigger manually from the Actions tab.
+  workflow_dispatch:
+
+# GITHUB_TOKEN needs write so we can push the regenerated src/odds.ts back.
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    name: Re-fit model and commit fresh src/odds.ts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Default token has push rights here because of the permissions block above.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: model/requirements.txt
+
+      - name: Install model deps
+        run: pip install -r model/requirements.txt
+
+      - name: Regenerate odds
+        run: python model/generate_odds.py
+
+      - name: Commit if changed
+        # If the model produced identical output, exit cleanly with no commit.
+        # Otherwise commit + push as github-actions[bot]; Vercel's webhook will
+        # see the push and redeploy.
+        run: |
+          if git diff --quiet src/odds.ts; then
+            echo "No change to src/odds.ts — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/odds.ts
+          git commit -m "chore: refresh odds [auto]"
+          git push

@@ -1,14 +1,14 @@
-# Core data fetching + manipulation
+# Core deps for fetch_data + dixon_coles + generate_odds (default flow).
+# Install: pip install -r model/requirements.txt
+#
+# For the Bayesian model (Tier 3), also install requirements-bayesian.txt
+# — separated because pymc + arviz pull in ~500MB and aren't needed for
+# the default Dixon-Coles + xG path.
+
 requests>=2.31
 pandas>=2.0
 lxml>=4.9          # for pandas.read_html
 beautifulsoup4>=4.12
 
-# Optimisation for Dixon-Coles MLE
-scipy>=1.11
+scipy>=1.11        # MLE for Dixon-Coles
 numpy>=1.26
-
-# Bayesian model (Tier 3 only — heavy install, ~500MB)
-# Comment out if you don't need bayesian.py
-pymc>=5.10
-arviz>=0.17
