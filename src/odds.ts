@@ -14,7 +14,7 @@ export type MatchProbs = { home: number; draw: number; away: number };
 
 export const MATCH_PROBABILITIES: Record<string, MatchProbs> = {
   // MW35
-  'M35-AVL-TOT': { home: 0.46, draw: 0.24, away: 0.30 }, // [pm]  Aston Villa v Tottenham (covers.com / Dimers model)
+  // M35-AVL-TOT removed: AVL 1-2 TOT (3 May 2026) — result baked into data.ts.
   'M35-CHE-NFO': { home: 0.57, draw: 0.24, away: 0.19 }, // [bk]  Chelsea v Forest (1.66 / 4.00 / 5.00)
 
   // MW36

@@ -26,7 +26,7 @@ export const TEAMS: TeamSeed[] = [
   { name: 'Manchester City',         short: 'MCI', played: 33, won: 21, drawn: 7,  lost: 5,  gf: 66, ga: 29, points: 70 },
   { name: 'Manchester United',       short: 'MUN', played: 34, won: 17, drawn: 10, lost: 7,  gf: 60, ga: 46, points: 61 },
   { name: 'Liverpool',               short: 'LIV', played: 34, won: 17, drawn: 7,  lost: 10, gf: 57, ga: 44, points: 58 },
-  { name: 'Aston Villa',             short: 'AVL', played: 34, won: 17, drawn: 7,  lost: 10, gf: 47, ga: 42, points: 58 },
+  { name: 'Aston Villa',             short: 'AVL', played: 35, won: 17, drawn: 7,  lost: 11, gf: 48, ga: 44, points: 58 },
   { name: 'Brentford',               short: 'BRE', played: 35, won: 14, drawn: 9,  lost: 12, gf: 52, ga: 46, points: 51 },
   { name: 'Brighton & Hove Albion',  short: 'BHA', played: 35, won: 13, drawn: 11, lost: 11, gf: 49, ga: 42, points: 50 },
   { name: 'Bournemouth',             short: 'BOU', played: 34, won: 11, drawn: 16, lost: 7,  gf: 52, ga: 52, points: 49 },
@@ -39,7 +39,7 @@ export const TEAMS: TeamSeed[] = [
   { name: 'Leeds United',            short: 'LEE', played: 35, won: 10, drawn: 13, lost: 12, gf: 47, ga: 52, points: 43 },
   { name: 'Nottingham Forest',       short: 'NFO', played: 34, won: 10, drawn: 9,  lost: 15, gf: 41, ga: 45, points: 39 },
   { name: 'West Ham United',         short: 'WHU', played: 35, won: 9,  drawn: 9,  lost: 17, gf: 42, ga: 61, points: 36 },
-  { name: 'Tottenham Hotspur',       short: 'TOT', played: 34, won: 8,  drawn: 10, lost: 16, gf: 43, ga: 53, points: 34 },
+  { name: 'Tottenham Hotspur',       short: 'TOT', played: 35, won: 9,  drawn: 10, lost: 16, gf: 45, ga: 54, points: 37 },
   { name: 'Burnley',                 short: 'BUR', played: 35, won: 4,  drawn: 8,  lost: 23, gf: 35, ga: 71, points: 20 },
   { name: 'Wolverhampton Wanderers', short: 'WOL', played: 35, won: 3,  drawn: 9,  lost: 23, gf: 25, ga: 63, points: 18 },
 ];
@@ -52,8 +52,9 @@ export const TOGGLEABLE_CLUBS: { key: ClubKey; name: string; short: string }[] =
 ];
 
 // Each match listed once, even if both clubs are toggleable. Kickoff times are UK local.
+// Played fixtures are removed from this list and their result baked into TEAMS above.
+// Last update: AVL 1-2 TOT (Sun 3 May 2026) — recorded 2026-05-03.
 export const MATCHES: Match[] = [
-  { id: 'M35-AVL-TOT', matchday: 35, home: 'AVL', away: 'TOT', kickoff: 'Sun 3 May, 19:00 BST' },
   { id: 'M36-TOT-LEE', matchday: 36, home: 'TOT', away: 'LEE', kickoff: 'Mon 11 May, 20:00 BST' },
   { id: 'M37-CHE-TOT', matchday: 37, home: 'CHE', away: 'TOT', kickoff: 'Sun 17 May, 14:00 BST' },
   { id: 'M38-TOT-EVE', matchday: 38, home: 'TOT', away: 'EVE', kickoff: 'Sun 24 May, 16:00 BST' },
