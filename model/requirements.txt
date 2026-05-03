@@ -1,0 +1,14 @@
+# Core data fetching + manipulation
+requests>=2.31
+pandas>=2.0
+lxml>=4.9          # for pandas.read_html
+beautifulsoup4>=4.12
+
+# Optimisation for Dixon-Coles MLE
+scipy>=1.11
+numpy>=1.26
+
+# Bayesian model (Tier 3 only — heavy install, ~500MB)
+# Comment out if you don't need bayesian.py
+pymc>=5.10
+arviz>=0.17
