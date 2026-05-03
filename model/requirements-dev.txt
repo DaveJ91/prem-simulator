@@ -1,0 +1,8 @@
+# Test deps for model/. Install on top of the core deps:
+#     pip install -r model/requirements.txt
+#     pip install -r model/requirements-dev.txt
+
+-r requirements.txt
+
+pytest>=8.0
+ruff>=0.6

@@ -25,7 +25,8 @@ There are two ways to keep them current:
 - **Frontend**: Vite + React + TypeScript, framer-motion for the table animation. No router, no state library.
 - **Hosting**: Vercel — every push to `main` auto-deploys.
 - **Model (optional)**: Python — pandas + scipy for Dixon-Coles, optional PyMC for the Bayesian variant. See [`model/README.md`](model/README.md).
-- **CI**: GitHub Actions — lint + typecheck + build on every PR, plus a daily cron that re-fits the model and commits a fresh `src/odds.ts`. See [`.github/workflows/`](.github/workflows/).
+- **CI**: GitHub Actions — lint + typecheck + build + unit tests (Vitest for TS, pytest for Python) on every PR, plus a daily cron that re-fits the model and commits a fresh `src/odds.ts`. See [`.github/workflows/`](.github/workflows/).
+- **Dependency updates**: Dependabot opens weekly PRs for npm, pip, and GitHub Actions versions. See [`.github/dependabot.yml`](.github/dependabot.yml).
 
 ## Project layout
 
@@ -54,8 +55,18 @@ model/                   Python prediction pipeline (optional)
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build
+npm run dev          # http://localhost:5173
+npm run build        # tsc -b && vite build
+npm test             # vitest run (Node env)
+npm run test:watch   # rerun on change
+```
+
+Python model tests:
+
+```bash
+cd model
+pip install -r requirements-dev.txt
+pytest tests/ -v
 ```
 
 ### Refresh the model probabilities

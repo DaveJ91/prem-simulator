@@ -206,11 +206,18 @@ class DixonColesModel:
             ag = df["ftag"].astype(int).to_numpy()
 
         # ---- Joint optimisation ----
-        # We fit α/β jointly with ρ and γ. To make the solution identifiable
-        # we'd normally pin one team's α=0 (or sum-zero constraint), but with
-        # time decay the optimum is well-defined enough; scipy handles it.
+        # We fit α/β jointly with ρ (DC correction) and γ (home advantage).
+        #
+        # We add bounds to all parameters because, especially on small or
+        # imbalanced datasets, the unbounded MLE can drift into pathological
+        # regions (ρ at -100k makes τ explode). The bounds are wide enough
+        # not to bind on realistic data:
+        #   - team ratings α/β: [-5, 5]   real values typically in [-1.5, 1.5]
+        #   - ρ:                [-0.3, 0.3]  DC's original paper found |ρ| < 0.2
+        #   - γ:                [-2, 2]   real home advantage ≈ 0.3
         rho0, gamma0 = -0.1, 0.3
         theta0 = np.zeros(4 * n)
+        bounds = [(-5.0, 5.0)] * (4 * n) + [(-0.3, 0.3), (-2.0, 2.0)]
 
         def packed_obj(params):
             theta = params[:4 * n]
@@ -221,7 +228,7 @@ class DixonColesModel:
             )
 
         x0 = np.concatenate([theta0, [rho0, gamma0]])
-        res = minimize(packed_obj, x0, method="L-BFGS-B",
+        res = minimize(packed_obj, x0, method="L-BFGS-B", bounds=bounds,
                        options={"maxiter": 500, "ftol": 1e-7})
         if not res.success:
             print(f"  ⚠ optimiser warning: {res.message}")
@@ -264,7 +271,9 @@ class DixonColesModel:
         grid[0, 1] *= 1 + lam_h * self.rho_
         grid[1, 0] *= 1 + lam_a * self.rho_
         grid[1, 1] *= 1 - self.rho_
-        # Re-normalise so it sums to exactly 1.
+        # τ correction can drive a cell slightly negative for extreme λ × ρ
+        # combinations. Clip before renormalising — probabilities must be ≥ 0.
+        grid = np.clip(grid, 0.0, None)
         return grid / grid.sum()
 
     def predict_outcome(self, home: str, away: str) -> tuple[float, float, float]:
