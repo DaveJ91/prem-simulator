@@ -1,0 +1,9 @@
+# Tier 3 Bayesian model only. Pulls in PyMC + ArviZ (~500MB).
+# Install on top of the core deps:
+#     pip install -r model/requirements.txt
+#     pip install -r model/requirements-bayesian.txt
+
+-r requirements.txt
+
+pymc>=5.10
+arviz>=0.17

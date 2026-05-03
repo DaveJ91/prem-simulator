@@ -25,6 +25,7 @@ There are two ways to keep them current:
 - **Frontend**: Vite + React + TypeScript, framer-motion for the table animation. No router, no state library.
 - **Hosting**: Vercel — every push to `main` auto-deploys.
 - **Model (optional)**: Python — pandas + scipy for Dixon-Coles, optional PyMC for the Bayesian variant. See [`model/README.md`](model/README.md).
+- **CI**: GitHub Actions — lint + typecheck + build on every PR, plus a daily cron that re-fits the model and commits a fresh `src/odds.ts`. See [`.github/workflows/`](.github/workflows/).
 
 ## Project layout
 
