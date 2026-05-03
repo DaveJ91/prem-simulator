@@ -143,22 +143,6 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-function hashLocked(locked: Results): number {
-  // Stable hash over sorted match ids + scores.
-  const keys = Object.keys(locked).sort();
-  let h = 2166136261;
-  for (const k of keys) {
-    const v = locked[k];
-    if (!v) continue;
-    const s = `${k}:${v.hg}-${v.ag};`;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-  }
-  return h >>> 0;
-}
-
 function sampleFromDist(dist: number[], rand: () => number): number {
   const r = rand();
   let acc = 0;
@@ -186,22 +170,35 @@ function sampleScore(matchId: string, rand: () => number): Score | null {
 }
 
 // Monte Carlo: estimate each team's chance of finishing 17th or better.
-// Deterministic for a given `locked` state — seeded from a hash of the inputs.
+//
+// Uses a fixed seed so the same 10k sampled "futures" are reused across every
+// call. This guarantees monotonicity in the locked inputs — bumping a Spurs
+// 3-0 win to 4-0 can only improve their position (better GD, same points), so
+// their survival % must move up or stay flat. With a per-input hash, the RNG
+// sequence used to sample the OTHER 11 fixtures would also change, and the
+// resulting variance (~1-2pp) easily swamped the small genuine GD signal —
+// users saw their survival drop after entering a more favourable result.
+const SURVIVAL_SEED = 0x9e3779b9;
+
 export function survivalProbabilities(
   locked: Results,
   iterations = 10000,
 ): Record<string, number> {
-  const rand = mulberry32(hashLocked(locked) ^ 0x9e3779b9);
+  const rand = mulberry32(SURVIVAL_SEED);
   const counts: Record<string, number> = {};
   for (const t of TEAMS) counts[t.short] = 0;
 
   for (let i = 0; i < iterations; i++) {
-    const sim: Results = { ...locked };
+    // Always sample every fixture in fixed order so the RNG sequence consumed
+    // per iteration is identical regardless of which fixtures are locked.
+    // Then overlay the locked results, which take precedence.
+    const sim: Results = {};
     for (const m of MATCHES) {
-      if (sim[m.id]) continue;
       const s = sampleScore(m.id, rand);
       if (s) sim[m.id] = s;
     }
+    Object.assign(sim, locked);
+
     const standings = computeStandings(sim);
     const safeCount = Math.min(17, standings.length);
     for (let pos = 0; pos < safeCount; pos++) counts[standings[pos].short] += 1;
