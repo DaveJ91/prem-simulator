@@ -39,8 +39,12 @@ jobs:
         # and bundling errors in one step.
         run: npm run build
 
+      - name: Test
+        # Vitest runs every src/**/*.test.ts file in node environment.
+        run: npm test
+
   python:
-    name: Python model (lint + import smoke test)
+    name: Python model (lint + tests)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,21 +53,20 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-          cache-dependency-path: model/requirements.txt
+          cache-dependency-path: model/requirements-dev.txt
 
-      - name: Install core deps
-        # Bayesian deps (pymc, arviz) deliberately skipped — too heavy for a
-        # smoke test. To validate bayesian.py changes, run locally.
-        run: |
-          pip install -r model/requirements.txt
-          pip install ruff
+      - name: Install dev deps
+        # requirements-dev.txt pulls in core deps + ruff + pytest.
+        # Bayesian (pymc, arviz) deliberately skipped — too heavy for CI.
+        run: pip install -r model/requirements-dev.txt
 
       - name: Lint with ruff
         run: ruff check model/
 
       - name: Import smoke test
-        # Catches syntax errors and import-time crashes without hitting the
-        # network or fitting any models. Sufficient as a "code still runs"
-        # check for a small project.
+        # Catches syntax errors before pytest tries to collect anything.
         working-directory: model
         run: python -c "import dixon_coles, fetch_data, generate_odds"
+
+      - name: Pytest
+        run: pytest model/tests/ -v

@@ -1,0 +1,46 @@
+version: 2
+
+# Dependabot opens PRs when dependencies have updates available.
+# Weekly cadence keeps the noise low for a hobby project — daily
+# floods the inbox.
+#
+# Three ecosystems:
+#   - npm:            React / Vite / Vitest / framer-motion
+#   - pip (model):    pandas, scipy, requests, ruff, pytest
+#   - github-actions: setup-node, setup-python, checkout, etc.
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Lump non-breaking updates into a single PR per group to reduce noise.
+      types:
+        patterns:
+          - "@types/*"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "typescript-eslint"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+
+  - package-ecosystem: pip
+    directory: /model
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
