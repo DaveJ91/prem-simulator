@@ -163,10 +163,14 @@ class DixonColesModel:
 
         # Dixon-Coles τ correction (vectorised over the 4 affected cells)
         tau = np.ones_like(lam_h)
-        m00 = (hg == 0) & (ag == 0); tau[m00] = 1 - lam_h[m00] * lam_a[m00] * rho
-        m01 = (hg == 0) & (ag == 1); tau[m01] = 1 + lam_h[m01] * rho
-        m10 = (hg == 1) & (ag == 0); tau[m10] = 1 + lam_a[m10] * rho
-        m11 = (hg == 1) & (ag == 1); tau[m11] = 1 - rho
+        m00 = (hg == 0) & (ag == 0)
+        m01 = (hg == 0) & (ag == 1)
+        m10 = (hg == 1) & (ag == 0)
+        m11 = (hg == 1) & (ag == 1)
+        tau[m00] = 1 - lam_h[m00] * lam_a[m00] * rho
+        tau[m01] = 1 + lam_h[m01] * rho
+        tau[m10] = 1 + lam_a[m10] * rho
+        tau[m11] = 1 - rho
         # Guard against τ ≤ 0 (would explode log)
         tau = np.clip(tau, 1e-9, None)
 

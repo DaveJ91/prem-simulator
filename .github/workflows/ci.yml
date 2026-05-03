@@ -19,7 +19,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Node 22 ships npm 10.9+, which understands the npm 11 lockfile format.
+          # Node 20's npm 10.5 chokes on it.
+          node-version: '22'
           cache: 'npm'
 
       - run: npm ci
